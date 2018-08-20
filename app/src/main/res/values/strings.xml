@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Donate</string>
+    <string name="large_text">
+        "Welcome to my donation application."
+
+        "\n\nMy name is Amir Zaidi and I am a student at Delft, University of Technology, in the Netherlands."
+
+        "\n\nIf you wish to contact me you may click the mail icon above, or the three dots in the top right corner."
+        "I do not read my e-mails often, so if you have something urgent I recommend using Telegram."
+    </string>
+    <string name="action_telegram">Telegram</string>
+    <string name="action_mail">E-Mail</string>
+</resources>
