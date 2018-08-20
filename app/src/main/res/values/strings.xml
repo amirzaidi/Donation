@@ -4,9 +4,34 @@
         "Welcome to my donation application."
 
         "\n\nMy name is Amir Zaidi and I am a student at Delft, University of Technology, in the Netherlands."
+        "I hope you have been enjoying the applications I make."
+        "Everything I do is open source so others can continue my work, and make even better apps."
+        "All of this is free for both developers and users."
 
-        "\n\nIf you wish to contact me you may click the mail icon above, or the three dots in the top right corner."
+        "\n\nHere is a list of my Android-related projects"
+        "\n- Rootless Pixel Launcher"
+        "\n- Rootless Pixel Bridge"
+        "\n- Google Icons"
+        "\n- Material FX"
+        "\n- Adaptive Stune"
+        "\n- Dynamica Live Wallpaper"
+        "\n- DNG Processor"
+        "\n- Night Camera"
+        "\n- Ozone Essentials"
+        "\n- Audio Streamer"
+        "\n- Assist Mapper"
+
+        "\n\nNow I, as everyone else, have only a limited amount of time."
+        "You can support me and my development journey by donating to me with the orange button above."
+        "Every gift will be remembered, and put to use on new applications in the future."
+
+        "\n\nIf you wish to contact me, it is very easy to reach me outside of school hours."
+        "Click on the three dots in the top right corner of the screen."
+        "There you can select either Telegram or E-mail as the means to reach me."
         "I do not read my e-mails often, so if you have something urgent I recommend using Telegram."
+
+        "\n\nThanks for reading my story!"
+        "\nAmir Zaidi"
     </string>
     <string name="action_telegram">Telegram</string>
     <string name="action_mail">E-Mail</string>
