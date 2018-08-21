@@ -14,6 +14,7 @@
         android:layout_margin="@dimen/text_margin"
         android:textSize="16sp"
         android:lineSpacingExtra="6dp"
-        android:text="@string/story" />
+        android:text="@string/story"
+        android:autoLink="web" />
 
 </androidx.core.widget.NestedScrollView>
