@@ -3,13 +3,13 @@ package amirz.donation;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.android.billingclient.api.SkuDetails;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
@@ -25,28 +25,33 @@ public class DonationFragment extends DialogFragment {
             .setNeutralButton(android.R.string.cancel, null);
 
         final DonationActivity activity = (DonationActivity) getActivity();
-        Iterator<SkuDetails> skus = activity.getSkus().iterator();
 
-        // First IAP
-        if (skus.hasNext()) {
-            final SkuDetails sku = skus.next();
-            builder.setNegativeButton(sku.getPrice(), new DialogInterface.OnClickListener() {
+        List<SkuDetails> skus = new ArrayList<>(activity.getSkus());
+        Collections.sort(skus, new Comparator<SkuDetails>() {
+            @Override
+            public int compare(SkuDetails o1, SkuDetails o2) {
+                return Long.compare(o1.getPriceAmountMicros(), o2.getPriceAmountMicros());
+            }
+        });
+
+        for (int i = 0; i < skus.size() && i < 2; i++) {
+            final SkuDetails sku = skus.get(i);
+
+            String price = sku.getPrice();
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     activity.buy(sku);
                 }
-            });
-        }
+            };
 
-        // Second IAP
-        if (skus.hasNext()) {
-            final SkuDetails sku = skus.next();
-            builder.setPositiveButton(sku.getPrice(), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    activity.buy(sku);
-                }
-            });
+            if (i == 0) {
+                // Cheapest IAP
+                builder.setNegativeButton(price, listener);
+            } else {
+                // More expensive IAP
+                builder.setPositiveButton(price, listener);
+            }
         }
 
         return builder.create();
