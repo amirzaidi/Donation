@@ -9,6 +9,7 @@ import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchaseHistoryResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
@@ -63,10 +64,10 @@ public class BillingHandler {
     public interface BillingCallbacks {
         void onStateChanged(boolean connected);
 
-        void onPurchased(SkuDetails sku);
+        void onPurchased(SkuDetails sku, boolean isNew);
     }
 
-    private class Listener implements BillingClientStateListener, SkuDetailsResponseListener, PurchasesUpdatedListener {
+    private class Listener implements BillingClientStateListener, SkuDetailsResponseListener, PurchasesUpdatedListener, PurchaseHistoryResponseListener {
         @Override
         public void onBillingSetupFinished(int responseCode) {
             Log.w(TAG, "onBillingSetupFinished " + responseCode);
@@ -87,6 +88,18 @@ public class BillingHandler {
             }
 
             mCb.onStateChanged(true);
+            mBilling.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP, this);
+        }
+
+        @Override
+        public void onPurchaseHistoryResponse(int responseCode, List<Purchase> purchasesList) {
+            Log.w(TAG, "onPurchaseHistoryResponse " + responseCode);
+            if (purchasesList != null) {
+                for (Purchase purchase : purchasesList) {
+                    SkuDetails sku = mSkus.get(purchase.getSku());
+                    mCb.onPurchased(sku, false);
+                }
+            }
         }
 
         @Override
@@ -100,7 +113,7 @@ public class BillingHandler {
                         public void onConsumeResponse(int responseCode, String purchaseToken) {
                             Log.w(TAG, "consumePurchase " + responseCode);
                             if (responseCode == BillingClient.BillingResponse.OK) {
-                                mCb.onPurchased(sku);
+                                mCb.onPurchased(sku, true);
                             }
                         }
                     });

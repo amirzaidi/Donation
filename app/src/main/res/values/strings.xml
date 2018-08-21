@@ -39,5 +39,6 @@
 
     <string name="donate_title">Support me</string>
     <string name="donate_desc">Here you can send me a donation if you want to.</string>
-    <string name="donate_success">Thank you for your support! &lt;3</string>
+    <string name="donate_new">Thank you for your support! &lt;3</string>
+    <string name="donate_history">Thank you for your support!</string>
 </resources>

@@ -27,6 +27,7 @@ public class DonationActivity extends AppCompatActivity implements BillingHandle
     private FloatingActionButton mFab;
     private BillingHandler mBilling;
     private DialogFragment mDialog;
+    private boolean mHideSnackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +56,19 @@ public class DonationActivity extends AppCompatActivity implements BillingHandle
     }
 
     @Override
-    public void onPurchased(SkuDetails sku) {
-        Log.w(TAG, "onPurchased " + sku.getSku());
-        Snackbar.make(mFab, R.string.donate_success, Snackbar.LENGTH_LONG).show();
+    public void onPurchased(SkuDetails sku, boolean isNew) {
+        Log.w(TAG, "onPurchased " + sku.getSku() + " " + isNew);
+        if (!isNew) {
+            if (mHideSnackbar) {
+                return;
+            } else {
+                mHideSnackbar = true;
+            }
+        }
+        Snackbar.make(mFab, isNew
+                ? R.string.donate_new
+                : R.string.donate_history,
+                Snackbar.LENGTH_LONG).show();
     }
 
     public void buy(SkuDetails sku) {
