@@ -4,10 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,18 +12,32 @@ import android.view.View;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchaseHistoryResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class DonationActivity extends AppCompatActivity
-        implements PurchasesUpdatedListener, BillingClientStateListener, SkuDetailsResponseListener {
+        implements PurchasesUpdatedListener, BillingClientStateListener, SkuDetailsResponseListener, PurchaseHistoryResponseListener {
     private static final String TAG = "DonationActivity";
+    private static final List<String> SKU = Arrays.asList("donation.regular", "donation.large");
+
+    private FloatingActionButton mFab;
     private BillingClient mBilling;
+    private Map<String, SkuDetails> mIAPs = new HashMap<>();
+    private String mCurrency = "";
+    private double mGiven;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,28 +46,12 @@ public class DonationActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final List<String> skuList = new ArrayList<>();
-        skuList.add("donate.regular");
-        skuList.add("donate.large");
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = findViewById(R.id.fab);
+        mFab.setEnabled(false);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mBilling.isReady()) {
-                    mBilling.querySkuDetailsAsync(SkuDetailsParams.newBuilder()
-                            .setSkusList(skuList)
-                            .setType(BillingClient.SkuType.INAPP)
-                            .build(), DonationActivity.this);
-                } else {
-                    Snackbar.make(view, "Connection to Google Play failed", Snackbar.LENGTH_LONG)
-                            .setAction("Reconnect", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mBilling.startConnection(DonationActivity.this);
-                                }
-                            }).show();
-                }
+                showPurchased();
             }
         });
 
@@ -72,30 +66,77 @@ public class DonationActivity extends AppCompatActivity
     @Override
     public void onBillingSetupFinished(int responseCode) {
         Log.w(TAG, "onBillingSetupFinished " + responseCode);
+
+        if (mBilling.isReady()) {
+            mBilling.querySkuDetailsAsync(SkuDetailsParams.newBuilder()
+                    .setSkusList(SKU)
+                    .setType(BillingClient.SkuType.INAPP)
+                    .build(), DonationActivity.this);
+        }
     }
 
-    // Start purchase
+    // Load IAPs
     @Override
     public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
         Log.w(TAG, "onSkuDetailsResponse " + responseCode + " " + skuDetailsList.size());
+
+        if (mBilling.isReady()) {
+            mIAPs.clear();
+            for (SkuDetails sku : skuDetailsList) {
+                mCurrency = sku.getPriceCurrencyCode();
+                mIAPs.put(sku.getSku(), sku);
+            }
+
+            mFab.setEnabled(true);
+            mBilling.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP, this);
+        }
+    }
+
+    // Previous purchases
+    @Override
+    public void onPurchaseHistoryResponse(int responseCode, List<Purchase> purchasesList) {
+        Log.w(TAG, "onPurchaseHistoryResponse " + responseCode);
+        calculatePurchased(purchasesList);
     }
 
     // Purchased
     @Override
     public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
         Log.w(TAG, "onPurchasesUpdated " + responseCode);
+        Snackbar.make(mFab, "Thank you for your support! <3", Snackbar.LENGTH_LONG).show();
+        calculatePurchased(purchases);
+    }
+
+    private void calculatePurchased(List<Purchase> purchases) {
+        mGiven = 0;
+        if (purchases != null) {
+            for (Purchase purchase : purchases) {
+                SkuDetails IAP = mIAPs.get(purchase.getSku());
+                mGiven += IAP.getPriceAmountMicros() / 1000000d;
+            }
+        }
+    }
+
+    private void showPurchased() {
+        if (mGiven == 0) {
+            Snackbar.make(mFab, "No purchases", Snackbar.LENGTH_LONG).show();
+        } else {
+            Snackbar.make(mFab, "You have supported me with " + mGiven +
+                    " " + mCurrency, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     // Disconnected
     @Override
     public void onBillingServiceDisconnected() {
         Log.w(TAG, "onBillingServiceDisconnected");
+        mFab.setEnabled(false);
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mBilling.endConnection();
+        super.onDestroy();
     }
 
     @Override
