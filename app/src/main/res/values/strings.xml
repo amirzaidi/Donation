@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Donate</string>
-    <string name="large_text">
+    <string name="story">
         "Welcome to my donation application."
 
         "\n\nMy name is Amir Zaidi and I am a student at Delft, University of Technology, in the Netherlands."
@@ -33,6 +33,11 @@
         "\n\nThanks for reading my story!"
         "\nAmir Zaidi"
     </string>
+
     <string name="action_telegram">Telegram</string>
     <string name="action_mail">E-Mail</string>
+
+    <string name="donate_title">Support me</string>
+    <string name="donate_desc">Here you can send me a donation if you want to.</string>
+    <string name="donate_success">Thank you for your support! &lt;3</string>
 </resources>

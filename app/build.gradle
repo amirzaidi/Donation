@@ -21,6 +21,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.0-rc01'
+    implementation 'androidx.fragment:fragment:1.0.0-rc01'
     implementation 'com.google.android.material:material:1.0.0-rc01'
     implementation 'com.android.billingclient:billing:1.1'
     testImplementation 'junit:junit:4.12'
