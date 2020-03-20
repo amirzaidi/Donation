@@ -17,8 +17,8 @@
 
         "\n\nEverything I do is free and open source so others can improve it and make even better apps."
         "Now I, as everyone else, have only a limited amount of time."
-        "Still I feel like there isn't enough open source development and want to push other developers to adopt the model too."
-        "You can support me and my journey by buying A Feeling of Pride and Accomplishment with the orange button above."
+        "Still, I feel like there isn't enough open source development and want to push other developers to adopt the model too."
+        "You can support me and my journey by buying 'A Feeling of Pride and Accomplishment' with the orange button above."
         "When you have bought it you will unlock a banner in the app that thanks you for the purchase."
         "Every purchase will be remembered, and put to use for updates and new applications in the future."
 
@@ -34,6 +34,6 @@
     <string name="action_telegram">Telegram</string>
     <string name="action_mail">E-Mail</string>
 
-    <string name="donate_new">Thank you for buying A Feeling of Pride and Accomplishment!</string>
-    <string name="donate_history">Enjoy your feeling of pride and accomplishment!</string>
+    <string name="donate_new">"Thank you for buying 'A Feeling of Pride and Accomplishment'!"</string>
+    <string name="donate_history">"Enjoy your feeling of pride and accomplishment!"</string>
 </resources>
