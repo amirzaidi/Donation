@@ -1,14 +1,17 @@
 package amirz.donation;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.ConsumeResponseListener;
+import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.PurchaseHistoryResponseListener;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
@@ -19,6 +22,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.android.billingclient.api.BillingClient.BillingResponseCode.OK;
 
 public class BillingHandler {
     private static final String TAG = "BillingHandler";
@@ -39,6 +44,7 @@ public class BillingHandler {
 
         mBilling = BillingClient.newBuilder(mActivity)
                 .setListener(listener)
+                .enablePendingPurchases()
                 .build();
 
         mBilling.startConnection(listener);
@@ -49,12 +55,11 @@ public class BillingHandler {
     }
 
     public void buy(SkuDetails sku) {
-        int response = mBilling.launchBillingFlow(mActivity, BillingFlowParams.newBuilder()
-                .setSku(sku.getSku())
-                .setType(sku.getType())
-                .build());
-
-        Log.w(TAG, "buy " + response);
+        BillingResult response =
+                mBilling.launchBillingFlow(mActivity, BillingFlowParams.newBuilder()
+                        .setSkuDetails(sku)
+                        .build());
+        Log.w(TAG, "buy " + response.getDebugMessage());
     }
 
     public void destroy() {
@@ -67,11 +72,11 @@ public class BillingHandler {
         void onPurchased(SkuDetails sku, boolean isNew);
     }
 
-    private class Listener implements BillingClientStateListener, SkuDetailsResponseListener, PurchasesUpdatedListener, PurchaseHistoryResponseListener {
+    private class Listener implements BillingClientStateListener, SkuDetailsResponseListener,
+            PurchasesUpdatedListener, PurchaseHistoryResponseListener {
         @Override
-        public void onBillingSetupFinished(int responseCode) {
-            Log.w(TAG, "onBillingSetupFinished " + responseCode);
-
+        public void onBillingSetupFinished(BillingResult billingResult) {
+            Log.w(TAG, "onBillingSetupFinished " + billingResult.getDebugMessage());
             mBilling.querySkuDetailsAsync(SkuDetailsParams.newBuilder()
                     .setSkusList(mSkuKeys)
                     .setType(BillingClient.SkuType.INAPP)
@@ -79,23 +84,17 @@ public class BillingHandler {
         }
 
         @Override
-        public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
-            Log.w(TAG, "onSkuDetailsResponse " + responseCode + " " + skuDetailsList.size());
-
-            mSkus.clear();
-            for (SkuDetails sku : skuDetailsList) {
-                mSkus.put(sku.getSku(), sku);
-            }
-
-            mCb.onStateChanged(true);
-            mBilling.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP, this);
+        public void onBillingServiceDisconnected() {
+            Log.w(TAG, "onBillingServiceDisconnected");
+            mCb.onStateChanged(false);
         }
 
         @Override
-        public void onPurchaseHistoryResponse(int responseCode, List<Purchase> purchasesList) {
-            Log.w(TAG, "onPurchaseHistoryResponse " + responseCode);
-            if (purchasesList != null) {
-                for (Purchase purchase : purchasesList) {
+        public void onPurchaseHistoryResponse(BillingResult billingResult,
+                                              List<PurchaseHistoryRecord> list) {
+            Log.w(TAG, "onPurchaseHistoryResponse " + billingResult.getDebugMessage());
+            if (list != null) {
+                for (PurchaseHistoryRecord purchase : list) {
                     SkuDetails sku = mSkus.get(purchase.getSku());
                     mCb.onPurchased(sku, false);
                 }
@@ -103,18 +102,18 @@ public class BillingHandler {
         }
 
         @Override
-        public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
-            Log.w(TAG, "onPurchaseUpdated " + responseCode);
-            if (purchases != null) {
-                for (Purchase purchase : purchases) {
+        public void onPurchasesUpdated(BillingResult billingResult, @Nullable List<Purchase> list) {
+            Log.w(TAG, "onPurchaseUpdated " + billingResult.getDebugMessage());
+            if (list != null) {
+                for (Purchase purchase : list) {
                     final SkuDetails sku = mSkus.get(purchase.getSku());
-                    mBilling.consumeAsync(purchase.getPurchaseToken(), new ConsumeResponseListener() {
-                        @Override
-                        public void onConsumeResponse(int responseCode, String purchaseToken) {
-                            Log.w(TAG, "consumePurchase " + responseCode);
-                            if (responseCode == BillingClient.BillingResponse.OK) {
-                                mCb.onPurchased(sku, true);
-                            }
+                    mBilling.consumeAsync(ConsumeParams.newBuilder()
+                            .setDeveloperPayload(purchase.getDeveloperPayload())
+                            .setPurchaseToken(purchase.getPurchaseToken())
+                            .build(), (b, s) -> {
+                        Log.w(TAG, "onConsumePurchase " + billingResult.getDebugMessage());
+                        if (billingResult.getResponseCode() == OK) {
+                            mCb.onPurchased(sku, true);
                         }
                     });
                 }
@@ -122,9 +121,17 @@ public class BillingHandler {
         }
 
         @Override
-        public void onBillingServiceDisconnected() {
-            Log.w(TAG, "onBillingServiceDisconnected");
-            mCb.onStateChanged(false);
+        public void onSkuDetailsResponse(BillingResult billingResult, List<SkuDetails> list) {
+            Log.w(TAG, "onSkuDetailsResponse " + billingResult.getDebugMessage()
+                    + " " + list.size());
+
+            mSkus.clear();
+            for (SkuDetails sku : list) {
+                mSkus.put(sku.getSku(), sku);
+            }
+
+            mCb.onStateChanged(true);
+            mBilling.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP, this);
         }
     }
 }

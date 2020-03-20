@@ -1,35 +1,25 @@
 <resources>
-    <string name="app_name">Donate</string>
+    <string name="app_name">Support</string>
     <string name="story">
-        "Welcome to my donation application!"
+        "Hi!"
 
-        "\n\nMy name is Amir Zaidi and I am a student at Delft, University of Technology, in the Netherlands."
-        "I hope you have been enjoying the Android applications I have made."
-        "Everything I do is open source so others can continue my work, and make even better apps."
-        "All of this is free for both users and developers."
+        "\n\nMy name is Amir and I am a student at Delft, University of Technology, in the Netherlands."
+        "I hope you've been enjoying the Android applications I work on!"
 
         "\n\nProgramming has always been a hobby of me, ever since primary school."
         "Throughout the years I have learned many different skills."
-        "I started on websites, then moved to Windows applications, and am now doing Android development."
+        "I started on websites, then moved to PC programs, and am now doing Android development."
 
-        "\n\nHere is a list of my Android-related projects"
-        "\n- Global Squeeze"
-        "\n- Rootless Pixel Launcher"
-        "\n- Rootless Pixel Bridge"
-        "\n- Google Icons"
-        "\n- Material FX"
-        "\n- Adaptive Stune"
-        "\n- Dynamica Live Wallpaper"
-        "\n- DNG Processor"
-        "\n- Night Camera"
-        "\n- Ozone Essentials"
-        "\n- Audio Streamer"
-        "\n- Assist Mapper"
+        "\n\nThe Android apps I'm proud of are DNGP, Shade, RPL and Pixel Bridge."
+        "But there are many more apps that I've worked on, and you've probably never heard of them."
+        "For example, I recreated the Squeeze for Assistant feature on other phones, without pressure sensors."
+        "There's Google Icons, Material FX, Adaptive Stune, Dynamica, Ozone Essentials, Audio Streamer, Assist Mapper, and many more small projects on my GitHub."
 
-        "\n\nNow I, as everyone else, have only a limited amount of time."
-        "Still, I feel like there aren't enough open source developments and want to push other developers to adopt the model too, so I keep going."
-        "You can support me and my journey by donating with the orange button above."
-        "Every gift will be remembered, and put to use for updates and new applications in the future."
+        "\n\nEverything I do is free and open source so others can improve it and make even better apps."
+        "Now I, as everyone else, have only a limited amount of time."
+        "Still I feel like there isn't enough open source development and want to push other developers to adopt the model too."
+        "You can support me and my journey by buying an item with the orange button above."
+        "Every purchase will be remembered, and put to use for updates and new applications in the future."
 
         "\n\nIf you wish to contact me, it is very easy to reach me outside of school hours."
         "Click on the three dots in the top right corner of the screen."
@@ -37,14 +27,14 @@
         "I do not read my e-mails often, so if you have something urgent I recommend using Telegram."
 
         "\n\nThanks for reading my story!"
-        "\nAmir Zaidi"
+        "\n\nAmir Zaidi"
     </string>
 
     <string name="action_telegram">Telegram</string>
     <string name="action_mail">E-Mail</string>
 
-    <string name="donate_title">Support me</string>
-    <string name="donate_desc">Here you can send me a donation if you want to.</string>
-    <string name="donate_new">Thank you for your support! &lt;3</string>
-    <string name="donate_history">Thank you for your support!</string>
+    <string name="donate_title">Purchases</string>
+    <string name="donate_desc">Here you can support me by buying one of these items</string>
+    <string name="donate_new">You have now achieved a feeling of pride and accomplishment!</string>
+    <string name="donate_history">Enjoy your feeling of pride and accomplishment!</string>
 </resources>

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.android.billingclient.api.SkuDetails;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -38,12 +37,8 @@ public class DonationActivity extends AppCompatActivity implements BillingHandle
 
         mFab = findViewById(R.id.fab);
         mFab.setEnabled(false);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDialog.show(getSupportFragmentManager(), DonationFragment.TAG);
-            }
-        });
+        mFab.setOnClickListener(
+                view -> mDialog.show(getSupportFragmentManager(), DonationFragment.TAG));
 
         mBilling = new BillingHandler(this, this, SKU);
         mDialog = new DonationFragment();
