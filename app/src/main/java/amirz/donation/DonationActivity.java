@@ -7,41 +7,49 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.android.billingclient.api.SkuDetails;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
+import amirz.shade.ShadeFont;
 
 public class DonationActivity extends AppCompatActivity implements BillingHandler.BillingCallbacks {
     private static final String TAG = "DonationActivity";
     private static final List<String> SKU = Arrays.asList("donation.regular", "donation.large");
 
-    private FloatingActionButton mFab;
     private BillingHandler mBilling;
-    private DialogFragment mDialog;
+    private FloatingActionButton mFab;
     private boolean mHideSnackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ShadeFont.override(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_donation);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mBilling = new BillingHandler(this, this, SKU);
+
         mFab = findViewById(R.id.fab);
         mFab.setEnabled(false);
-        mFab.setOnClickListener(
-                view -> mDialog.show(getSupportFragmentManager(), DonationFragment.TAG));
-
-        mBilling = new BillingHandler(this, this, SKU);
-        mDialog = new DonationFragment();
+        mFab.setOnClickListener(v -> {
+            List<SkuDetails> skus = new ArrayList<>(mBilling.getSkus());
+            if (!skus.isEmpty()) {
+                Collections.sort(skus, (o1, o2) -> Long.compare(
+                        o1.getPriceAmountMicros(),
+                        o2.getPriceAmountMicros()));
+                mBilling.buy(skus.get(0));
+            }
+        });
     }
 
     @Override
@@ -66,14 +74,6 @@ public class DonationActivity extends AppCompatActivity implements BillingHandle
                 Snackbar.LENGTH_LONG).show();
     }
 
-    public void buy(SkuDetails sku) {
-        mBilling.buy(sku);
-    }
-
-    public Collection<SkuDetails> getSkus() {
-        return mBilling.getSkus();
-    }
-
     @Override
     protected void onDestroy() {
         mBilling.destroy();
@@ -93,7 +93,6 @@ public class DonationActivity extends AppCompatActivity implements BillingHandle
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         if (id == R.id.action_telegram) {
             sendTelegram();
             return true;
@@ -101,7 +100,6 @@ public class DonationActivity extends AppCompatActivity implements BillingHandle
             sendMail();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

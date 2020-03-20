@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Support</string>
     <string name="story">
-        "Hi!"
+        "Hey!"
 
         "\n\nMy name is Amir and I am a student at Delft, University of Technology, in the Netherlands."
         "I hope you've been enjoying the Android applications I work on!"
@@ -18,13 +18,14 @@
         "\n\nEverything I do is free and open source so others can improve it and make even better apps."
         "Now I, as everyone else, have only a limited amount of time."
         "Still I feel like there isn't enough open source development and want to push other developers to adopt the model too."
-        "You can support me and my journey by buying an item with the orange button above."
+        "You can support me and my journey by buying A Feeling of Pride and Accomplishment with the orange button above."
+        "When you have bought it you will unlock a banner in the app that thanks you for the purchase."
         "Every purchase will be remembered, and put to use for updates and new applications in the future."
 
-        "\n\nIf you wish to contact me, it is very easy to reach me outside of school hours."
+        "\n\nIf you wish to contact me, it is easy to reach me outside of school hours."
         "Click on the three dots in the top right corner of the screen."
         "There you can select either Telegram or E-mail as the means to reach me."
-        "I do not read my e-mails often, so if you have something urgent I recommend using Telegram."
+        "I do not read my e-mails often, so if you have something urgent I highly recommend using Telegram."
 
         "\n\nThanks for reading my story!"
         "\n\nAmir Zaidi"
@@ -33,8 +34,6 @@
     <string name="action_telegram">Telegram</string>
     <string name="action_mail">E-Mail</string>
 
-    <string name="donate_title">Purchases</string>
-    <string name="donate_desc">Here you can support me by buying one of these items</string>
-    <string name="donate_new">You have now achieved a feeling of pride and accomplishment!</string>
+    <string name="donate_new">Thank you for buying A Feeling of Pride and Accomplishment!</string>
     <string name="donate_history">Enjoy your feeling of pride and accomplishment!</string>
 </resources>
