@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
 import com.android.billingclient.api.SkuDetails;
@@ -22,6 +23,10 @@ import java.util.List;
 import amirz.shade.ShadeFont;
 
 public class DonationActivity extends AppCompatActivity implements BillingHandler.BillingCallbacks {
+    static {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+    }
+
     private static final String TAG = "DonationActivity";
     private static final List<String> SKU = Arrays.asList("donation.regular", "donation.large");
 
