@@ -122,10 +122,12 @@ public class BillingHandler {
 
         @Override
         public void onSkuDetailsResponse(BillingResult billingResult, List<SkuDetails> list) {
-            Log.w(TAG, "onSkuDetailsResponse " + billingResult.getDebugMessage()
-                    + " " + list.size());
+            Log.w(TAG, "onSkuDetailsResponse " + billingResult.getDebugMessage());
 
             mSkus.clear();
+            if (list == null) {
+                return;
+            }
             for (SkuDetails sku : list) {
                 mSkus.put(sku.getSku(), sku);
             }
